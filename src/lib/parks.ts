@@ -1,0 +1,123 @@
+export interface ParkDef {
+  slug: string;
+  name: string;
+  shortName: string;
+  location: string;
+  themeParksId: string;
+  timezone: string;
+  color: string;
+  logo: string;
+}
+
+export const PARKS: ParkDef[] = [
+  // ── Disneyland Resort ───────────────────────────────────────────
+  {
+    slug: "disneyland",
+    name: "Disneyland Park",
+    shortName: "Disneyland",
+    location: "Anaheim, CA",
+    themeParksId: "7340550b-c14d-4def-80bb-acbe51ac536a",
+    timezone: "America/Los_Angeles",
+    color: "#1565C0",
+    logo: "🏰",
+  },
+  {
+    slug: "california-adventure",
+    name: "Disney California Adventure",
+    shortName: "California Adventure",
+    location: "Anaheim, CA",
+    themeParksId: "832fcd51-ea19-4e77-85c7-75d5843b127c",
+    timezone: "America/Los_Angeles",
+    color: "#E65100",
+    logo: "🌟",
+  },
+  // ── Walt Disney World ────────────────────────────────────────────
+  {
+    slug: "magic-kingdom",
+    name: "Magic Kingdom",
+    shortName: "Magic Kingdom",
+    location: "Orlando, FL",
+    themeParksId: "75ea578a-adc8-4116-a54d-dccb60765ef1",
+    timezone: "America/New_York",
+    color: "#6A1B9A",
+    logo: "👑",
+  },
+  {
+    slug: "epcot",
+    name: "EPCOT",
+    shortName: "EPCOT",
+    location: "Orlando, FL",
+    themeParksId: "47f90d2c-e191-4239-a466-5892ef59a88b",
+    timezone: "America/New_York",
+    color: "#00796B",
+    logo: "🌍",
+  },
+  {
+    slug: "hollywood-studios",
+    name: "Disney's Hollywood Studios",
+    shortName: "Hollywood Studios",
+    location: "Orlando, FL",
+    themeParksId: "288747d1-8b4f-4a64-867e-ea7c9b27bad8",
+    timezone: "America/New_York",
+    color: "#C62828",
+    logo: "🎬",
+  },
+  {
+    slug: "animal-kingdom",
+    name: "Disney's Animal Kingdom",
+    shortName: "Animal Kingdom",
+    location: "Orlando, FL",
+    themeParksId: "1c84a229-8862-4648-9c71-378ddd2c7693",
+    timezone: "America/New_York",
+    color: "#2E7D32",
+    logo: "🦁",
+  },
+  // ── Universal Studios Hollywood ──────────────────────────────────
+  {
+    slug: "universal-hollywood",
+    name: "Universal Studios Hollywood",
+    shortName: "Universal Hollywood",
+    location: "Los Angeles, CA",
+    themeParksId: "eb3f4560-2383-4a36-9152-6b3e5ed6bc57",
+    timezone: "America/Los_Angeles",
+    color: "#F57F17",
+    logo: "🎥",
+  },
+  // ── Universal Orlando ────────────────────────────────────────────
+  {
+    slug: "universal-studios-florida",
+    name: "Universal Studios Florida",
+    shortName: "Universal Studios",
+    location: "Orlando, FL",
+    themeParksId: "eb3f4560-2383-4a36-9152-6b3e5ed6bc57",
+    timezone: "America/New_York",
+    color: "#FF6F00",
+    logo: "🎞️",
+  },
+  {
+    slug: "islands-of-adventure",
+    name: "Islands of Adventure",
+    shortName: "Islands of Adventure",
+    location: "Orlando, FL",
+    themeParksId: "267615cc-8943-4c2a-ae2c-5da728ca591f",
+    timezone: "America/New_York",
+    color: "#1976D2",
+    logo: "⚓",
+  },
+  {
+    slug: "epic-universe",
+    name: "Universal Epic Universe",
+    shortName: "Epic Universe",
+    location: "Orlando, FL",
+    themeParksId: "b2ae1f0d-39dc-43d7-a198-f1d7bc966e5d",
+    timezone: "America/New_York",
+    color: "#4527A0",
+    logo: "🌌",
+  },
+];
+
+export const PARK_BY_SLUG = Object.fromEntries(PARKS.map((p) => [p.slug, p]));
+export const PARK_BY_ID = Object.fromEntries(PARKS.map((p) => [p.themeParksId, p]));
+
+export const LA_PARKS = PARKS.filter((p) => p.location.includes("CA"));
+export const ORLANDO_PARKS = PARKS.filter((p) => p.location.includes("FL"));

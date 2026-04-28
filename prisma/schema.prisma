@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Park {
+  id           String       @id @default(cuid())
+  name         String
+  slug         String       @unique
+  location     String
+  themeParksId String       @unique
+  timezone     String
+  attractions  Attraction[]
+  createdAt    DateTime     @default(now())
+}
+
+model Attraction {
+  id             String         @id @default(cuid())
+  parkId         String
+  park           Park           @relation(fields: [parkId], references: [id])
+  name           String
+  themeParksId   String         @unique
+  attractionType String         @default("ATTRACTION")
+  snapshots      WaitSnapshot[]
+  createdAt      DateTime       @default(now())
+}
+
+model WaitSnapshot {
+  id           String     @id @default(cuid())
+  attractionId String
+  attraction   Attraction @relation(fields: [attractionId], references: [id])
+  waitMinutes  Int?
+  status       String
+  recordedAt   DateTime   @default(now())
+
+  @@index([attractionId, recordedAt])
+  @@index([recordedAt])
+}

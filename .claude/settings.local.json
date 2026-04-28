@@ -4,7 +4,12 @@
       "Bash(npm --version)",
       "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --no-turbopack)",
       "Read(//Users/eondavid/Documents/Appz/**)",
-      "Bash(npx create-next-app@latest parky --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --no-turbopack)"
+      "Bash(npx create-next-app@latest parky --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --no-turbopack)",
+      "Bash(npm install *)",
+      "Bash(npx prisma *)",
+      "Bash(node -e \"const {defineConfig} = require\\('./node_modules/prisma/config'\\); const c = defineConfig\\({}\\); console.log\\(JSON.stringify\\(c\\)\\)\")",
+      "Bash(git -C /Users/eondavid/Documents/Appz/Parky remote -v)",
+      "Bash(git -C /Users/eondavid/Documents/Appz/Parky log --oneline -3)"
     ]
   }
 }
