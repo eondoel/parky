@@ -9,7 +9,29 @@
       "Bash(npx prisma *)",
       "Bash(node -e \"const {defineConfig} = require\\('./node_modules/prisma/config'\\); const c = defineConfig\\({}\\); console.log\\(JSON.stringify\\(c\\)\\)\")",
       "Bash(git -C /Users/eondavid/Documents/Appz/Parky remote -v)",
-      "Bash(git -C /Users/eondavid/Documents/Appz/Parky log --oneline -3)"
+      "Bash(git -C /Users/eondavid/Documents/Appz/Parky log --oneline -3)",
+      "Bash(curl -s \"https://api.themeparks.wiki/v1/destinations\")",
+      "Bash(node -e ' *)",
+      "Bash(curl -s https://api.themeparks.wiki/v1/entity/__TRACKED_VAR__/live)",
+      "Bash(curl -s \"https://api.themeparks.wiki/v1/entity/75ea578a-adc8-4116-a54d-dccb60765ef9/live\")",
+      "Bash(git -C /Users/eondavid/Documents/Appz/Parky add src/components/ParkCard.tsx)",
+      "Bash(git -C /Users/eondavid/Documents/Appz/Parky commit -m \"fix: show park closed message when no rides are operating\")",
+      "Bash(git -C /Users/eondavid/Documents/Appz/Parky push)",
+      "Bash(git -C /Users/eondavid/Documents/Appz/Parky add src/components/ParkCard.tsx src/app/parks/\\\\[slug\\\\]/ParkDetailClient.tsx)",
+      "Bash(git -C /Users/eondavid/Documents/Appz/Parky commit -m \"fix: show all rides on card, display park local timezone\")",
+      "Bash(curl -s \"https://api.themeparks.wiki/v1/entity/75ea578a-adc8-4116-a54d-dccb60765ef9/schedule\")",
+      "Bash(git -C /Users/eondavid/Documents/Appz/Parky add src/app/api/schedule src/components/ParkCard.tsx src/app/page.tsx)",
+      "Bash(git -C /Users/eondavid/Documents/Appz/Parky commit -m \"feat: add park operating hours, separate CA/FL sections\")",
+      "WebSearch",
+      "WebFetch(domain:www.isitpacked.com)",
+      "WebFetch(domain:www.thrill-data.com)",
+      "WebFetch(domain:www.themeparkcrowd.com)",
+      "WebFetch(domain:wdwprepschool.com)",
+      "WebFetch(domain:theparkprodigy.com)",
+      "Bash(git -C /Users/eondavid/Documents/Appz/Parky add src/lib/predictions.ts src/app/calendar src/components/Navbar.tsx)",
+      "Bash(git -C /Users/eondavid/Documents/Appz/Parky commit -m \"feat: crowd prediction calendar, remove analyzer/planner tabs\")",
+      "Bash(git -C /Users/eondavid/Documents/Appz/Parky add -A)",
+      "Bash(git -C /Users/eondavid/Documents/Appz/Parky commit -m \"feat: calendar past year, holidays, ICS feeds, bigger nav arrows\")"
     ]
   }
 }
