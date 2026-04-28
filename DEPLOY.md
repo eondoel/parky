@@ -1,62 +1,66 @@
-# Deploying Parky to Railway
+# Deploying Parky — Vercel + Neon (free)
 
-## 1. Create a new Railway project
+## Part 1 — Neon (PostgreSQL database)
 
-1. Go to [railway.app](https://railway.app) → **New Project**
-2. Select **Deploy from GitHub repo** → connect this repo
-3. Railway auto-detects Next.js via Nixpacks
+1. Go to [neon.tech](https://neon.tech) → **Sign up free** (GitHub login works)
+2. Click **New Project** → give it a name like `parky` → **Create**
+3. On the project dashboard, click **Connection string** → copy the URL  
+   It looks like: `postgresql://user:password@ep-xxx.us-east-1.aws.neon.tech/neondb?sslmode=require`
+4. Save this — you'll need it in both Vercel and locally
 
-## 2. Add a PostgreSQL database
+## Part 2 — Run the migration locally first
 
-In your project dashboard:
-1. Click **+ New** → **Database** → **PostgreSQL**
-2. Railway will automatically inject `DATABASE_URL` into your app service
-
-## 3. Set environment variables
-
-In your app service → **Variables**, add:
-
-| Variable | Value |
-|---|---|
-| `DATABASE_URL` | *(auto-filled from the Postgres service)* |
-| `CRON_SECRET` | *(run `openssl rand -hex 32` to generate)* |
-| `NODE_ENV` | `production` |
-
-## 4. Deploy
-
-Railway will run:
+Add the connection string to your local `.env`:
 ```
-npm install → prisma generate → next build
-```
-Then on startup:
-```
-prisma migrate deploy && next start
+DATABASE_URL="postgresql://..."   ← paste Neon URL here
 ```
 
-## 5. Set up the cron job (data collection)
-
-Railway has built-in cron jobs:
-
-1. In your project → **+ New** → **Cron Job**
-2. Set the **Schedule** to `*/30 * * * *` (every 30 minutes)
-3. Set the **Command** to:
-   ```
-   curl -s -X POST https://YOUR-APP.up.railway.app/api/cron \
-     -H "Authorization: Bearer $CRON_SECRET"
-   ```
-4. Add the `CRON_SECRET` variable to the cron job service too
-
-## 6. Run the initial seed (optional)
-
-After first deploy, open a Railway shell and run:
+Then run:
 ```bash
+npx prisma migrate dev --name init
 npm run db:seed
 ```
-This seeds the parks table so the DB is ready before data collection begins.
 
-## Data Collection
+This creates the tables in Neon and seeds the 10 parks.
 
-- The cron job hits `/api/cron` every 30 minutes
-- Each run collects wait time snapshots for all 10 parks (~800–1500 attractions)
-- After a few days you'll have enough data for the Analyzer page to show meaningful charts
-- After a week you'll have day-of-week patterns; after a month, seasonal patterns
+## Part 3 — Vercel (app hosting)
+
+1. Go to [vercel.com](https://vercel.com) → **Sign up free** with GitHub
+2. Click **Add New → Project** → import your `parky` GitHub repo
+3. Vercel auto-detects Next.js — don't change any build settings
+4. Before clicking **Deploy**, go to **Environment Variables** and add:
+
+| Name | Value |
+|---|---|
+| `DATABASE_URL` | *(paste your Neon connection string)* |
+| `CRON_SECRET` | *(run `openssl rand -hex 32` in your terminal)* |
+
+5. Click **Deploy** — done. Vercel runs `prisma generate && next build` automatically.
+
+## Part 4 — GitHub Actions cron job
+
+The file `.github/workflows/cron.yml` is already in the repo.  
+It calls `/api/cron` every 30 minutes to collect wait time snapshots.
+
+You just need to add two secrets to your GitHub repo:
+
+1. Go to your repo on GitHub → **Settings → Secrets and variables → Actions**
+2. Click **New repository secret** and add:
+
+| Secret | Value |
+|---|---|
+| `APP_URL` | `https://your-app.vercel.app` *(your Vercel URL, no trailing slash)* |
+| `CRON_SECRET` | *(same value you set in Vercel)* |
+
+That's it — GitHub will ping your app every 30 minutes for free.
+
+## Summary
+
+```
+Neon (free Postgres) ──► DATABASE_URL
+                              │
+                         Vercel (Next.js)  ◄── GitHub repo (auto-deploy on push)
+                              │
+                    GitHub Actions (cron every 30min)
+                    └── POST /api/cron → stores snapshots
+```
