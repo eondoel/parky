@@ -54,7 +54,21 @@ export default function ParkCard({ park, refreshInterval = 60000 }: ParkCardProp
       : null;
 
   const crowd = avgWait !== null ? crowdLevel(avgWait) : null;
-  const top5 = operating.slice(0, 5);
+
+  // Show top 5: operating rides first (sorted by wait), then others
+  const top5 = [
+    ...attractions.filter((a) => a.status === "OPERATING"),
+    ...attractions.filter((a) => a.status !== "OPERATING"),
+  ].slice(0, 5);
+
+  // Format time in the park's local timezone
+  const parkTime = lastUpdated
+    ? lastUpdated.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: park.timezone,
+      })
+    : null;
 
   return (
     <Card className="flex flex-col h-full">
@@ -84,9 +98,7 @@ export default function ParkCard({ park, refreshInterval = 60000 }: ParkCardProp
             ))}
           </div>
         ) : top5.length === 0 ? (
-          <p className="text-sm text-gray-500 py-4 text-center">
-            {attractions.length > 0 ? "Park is currently closed" : "No live data available"}
-          </p>
+          <p className="text-sm text-gray-500 py-4 text-center">No live data available</p>
         ) : (
           <ul className="divide-y divide-gray-50">
             {top5.map((a) => (
@@ -99,10 +111,10 @@ export default function ParkCard({ park, refreshInterval = 60000 }: ParkCardProp
         )}
 
         <div className="mt-auto pt-2 flex items-center justify-between">
-          {lastUpdated && (
+          {parkTime && (
             <span className="flex items-center gap-1 text-xs text-gray-400">
               <Clock className="w-3 h-3" />
-              {lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+              {parkTime} local
             </span>
           )}
           <Link

@@ -186,7 +186,7 @@ export default function ParkDetailClient({ park }: { park: ParkDef }) {
 
       {lastUpdated && (
         <p className="text-center text-xs text-gray-400">
-          Last updated at {lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+          Last updated at {lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", timeZone: park.timezone })} local park time
         </p>
       )}
     </div>
