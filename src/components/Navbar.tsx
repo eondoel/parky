@@ -3,12 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { MapPin, BarChart2, CalendarCheck, Home } from "lucide-react";
+import { MapPin, Home, CalendarDays } from "lucide-react";
 
 const NAV = [
   { href: "/", label: "Parks", icon: Home },
-  { href: "/analyzer", label: "Analyzer", icon: BarChart2 },
-  { href: "/planner", label: "Planner", icon: CalendarCheck },
+  { href: "/calendar", label: "Calendar", icon: CalendarDays },
 ];
 
 export default function Navbar() {
