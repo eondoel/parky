@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { ParkDef } from "@/lib/parks";
 import WaitBadge from "@/components/WaitBadge";
+import AttractionImage from "@/components/AttractionImage";
 import { Card, CardContent } from "@/components/ui/card";
 import { crowdLevel } from "@/lib/utils";
 import { ArrowLeft, RefreshCw, Search } from "lucide-react";
@@ -168,17 +169,26 @@ export default function ParkDetailClient({ park }: { park: ParkDef }) {
           {filtered.map((a) => (
             <div
               key={a.id}
-              className="flex items-center justify-between bg-white rounded-xl border border-gray-200 px-4 py-3 gap-4"
+              className="flex items-center gap-3 bg-white rounded-xl border border-gray-200 overflow-hidden"
             >
-              <div className="min-w-0">
+              {/* Photo thumbnail */}
+              <div className="relative w-16 h-16 flex-shrink-0">
+                <AttractionImage
+                  attractionName={a.name}
+                  parkName={park.name}
+                  className="absolute inset-0 rounded-l-xl overflow-hidden"
+                />
+              </div>
+              {/* Info */}
+              <div className="flex-1 min-w-0 py-2">
                 <p className="text-sm font-medium text-gray-900 truncate">{a.name}</p>
                 {a.singleRider !== null && (
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    Single rider: {a.singleRider} min
-                  </p>
+                  <p className="text-xs text-gray-500 mt-0.5">Single rider: {a.singleRider} min</p>
                 )}
               </div>
-              <WaitBadge waitMinutes={a.waitMinutes} status={a.status} />
+              <div className="pr-4 flex-shrink-0">
+                <WaitBadge waitMinutes={a.waitMinutes} status={a.status} />
+              </div>
             </div>
           ))}
         </div>

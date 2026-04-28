@@ -4,9 +4,18 @@ export interface CrowdPrediction {
   label: string;
   color: string;
   bg: string;
+  icon: string;         // emoji icon representing crowd level
   reasons: string[];
-  holidays: string[];   // holiday / special event names for this date
+  holidays: string[];
 }
+
+export const CROWD_ICONS: Record<string, string> = {
+  "very-low": "🌵",   // Empty desert — walk right on
+  "low":      "🍦",   // Ice cream — take your time
+  "moderate": "🎡",   // Ferris wheel — manageable waits
+  "high":     "🎢",   // Roller coaster — plan ahead
+  "very-high":"🌋",   // Volcano erupting — packed!
+};
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -238,9 +247,9 @@ export function predictCrowd(date: Date, parkSlug: string): CrowdPrediction {
 }
 
 export function scoreToLevel(score: number): Omit<CrowdPrediction, "score" | "reasons" | "holidays"> {
-  if (score <= 2) return { level: "very-low", label: "Very Low",  color: "text-emerald-700", bg: "bg-emerald-100" };
-  if (score <= 4) return { level: "low",      label: "Low",       color: "text-green-700",   bg: "bg-green-100"  };
-  if (score <= 6) return { level: "moderate", label: "Moderate",  color: "text-yellow-700",  bg: "bg-yellow-100" };
-  if (score <= 8) return { level: "high",     label: "High",      color: "text-orange-700",  bg: "bg-orange-100" };
-  return            { level: "very-high", label: "Very High", color: "text-red-700",     bg: "bg-red-100"    };
+  if (score <= 2) return { level: "very-low", label: "Very Low",  color: "text-emerald-700", bg: "bg-emerald-100", icon: CROWD_ICONS["very-low"] };
+  if (score <= 4) return { level: "low",      label: "Low",       color: "text-green-700",   bg: "bg-green-100",  icon: CROWD_ICONS["low"]      };
+  if (score <= 6) return { level: "moderate", label: "Moderate",  color: "text-yellow-700",  bg: "bg-yellow-100", icon: CROWD_ICONS["moderate"] };
+  if (score <= 8) return { level: "high",     label: "High",      color: "text-orange-700",  bg: "bg-orange-100", icon: CROWD_ICONS["high"]     };
+  return            { level: "very-high", label: "Very High", color: "text-red-700",     bg: "bg-red-100",    icon: CROWD_ICONS["very-high"] };
 }

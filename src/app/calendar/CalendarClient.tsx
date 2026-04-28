@@ -2,9 +2,9 @@
 
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { PARKS, LA_PARKS, ORLANDO_PARKS } from "@/lib/parks";
-import { predictCrowd, getHolidaysForDate, scoreToLevel, CrowdPrediction } from "@/lib/predictions";
+import { predictCrowd, getHolidaysForDate, scoreToLevel, CrowdPrediction, CROWD_ICONS } from "@/lib/predictions";
 import { cn } from "@/lib/utils";
-import { ChevronLeft, ChevronRight, Info, Plus, Trash2, RefreshCw, CalendarDays, FlaskConical } from "lucide-react";
+import { ChevronLeft, ChevronRight, Info, Plus, Trash2, RefreshCw, CalendarDays, FlaskConical, CalendarCheck } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 const DOW    = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -26,18 +26,6 @@ interface CalFeed {
 
 const FEED_COLORS = ["#6366f1","#0ea5e9","#10b981","#f59e0b","#ef4444","#8b5cf6","#ec4899"];
 
-// ── Score dot ─────────────────────────────────────────────────────────────────
-
-function ScoreDot({ score, actual }: { score: number; actual?: boolean }) {
-  const { bg, color } = scoreToLevel(score);
-  return (
-    <span className={cn("inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-black", bg, color)}>
-      {score}
-      {actual && <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-blue-500 border border-white" />}
-    </span>
-  );
-}
-
 // ── Day cell ─────────────────────────────────────────────────────────────────
 
 function DayCell({
@@ -53,39 +41,40 @@ function DayCell({
   isSelected: boolean;
   onClick: () => void;
 }) {
-  const display = actual
-    ? { ...scoreToLevel(actual.score), score: actual.score }
-    : prediction;
+  const display = actual ? { ...scoreToLevel(actual.score), score: actual.score } : prediction;
+  // Past days without data are shown in grayscale/dimmed
+  const isDimmed = isPast && !actual;
 
   return (
     <button
-      onClick={onClick}
+      onClick={isDimmed ? undefined : onClick}
       className={cn(
-        "relative flex flex-col items-start w-full min-h-[4.5rem] rounded-xl p-1.5 text-xs font-medium transition-all border-2 text-left",
-        isPast && !actual
-          ? "opacity-40 bg-gray-50 border-transparent cursor-default"
+        "relative flex flex-col items-center w-full min-h-[5rem] rounded-xl p-1.5 transition-all border-2 text-center gap-0.5",
+        isDimmed
+          ? "bg-gray-50 border-transparent opacity-35 cursor-default"
           : isSelected
-          ? `${display.bg} ${display.color} border-current ring-2 ring-offset-1 ring-current`
-          : `${display.bg} ${display.color} border-transparent hover:border-current hover:shadow-sm`
+          ? `${display.bg} ${display.color} border-current ring-2 ring-offset-1 ring-current shadow-md`
+          : `${display.bg} ${display.color} border-transparent hover:border-current hover:shadow-sm cursor-pointer`,
+        // Actual data cells get a subtle glow to stand out
+        actual && !isDimmed && "shadow-sm ring-1 ring-current ring-opacity-30"
       )}
     >
       {/* Date number */}
-      <span className={cn("text-sm font-bold leading-none", isToday && "underline underline-offset-2")}>
+      <span className={cn(
+        "text-xs font-bold leading-none w-full text-left",
+        isToday && "underline underline-offset-2"
+      )}>
         {date.getDate()}
       </span>
 
-      {/* Crowd score pill */}
-      <span className={cn(
-        "mt-1 inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-semibold",
-        display.bg, display.color
-      )}>
-        {display.score}
-        {actual && <span className="opacity-60 text-[9px]">●</span>}
+      {/* Big crowd icon */}
+      <span className="text-2xl leading-none my-0.5" title={display.label}>
+        {display.icon}
       </span>
 
-      {/* First holiday/event */}
+      {/* First holiday label */}
       {holidays[0] && (
-        <span className="mt-0.5 w-full truncate text-[9px] opacity-70 leading-tight">
+        <span className="w-full truncate text-[8px] opacity-75 leading-tight px-0.5">
           {holidays[0]}
         </span>
       )}
@@ -94,19 +83,17 @@ function DayCell({
       {feedEvents.length > 0 && (
         <div className="absolute bottom-1 right-1 flex gap-0.5">
           {feedEvents.slice(0, 3).map((ev) => (
-            <span
-              key={ev.uid}
-              className="w-1.5 h-1.5 rounded-full opacity-80"
-              style={{ backgroundColor: "#6366f1" }}
-              title={ev.title}
-            />
+            <span key={ev.uid} className="w-1.5 h-1.5 rounded-full bg-indigo-500 opacity-80" title={ev.title} />
           ))}
         </div>
       )}
 
       {/* Today indicator */}
-      {isToday && (
-        <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-blue-500" />
+      {isToday && <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-blue-500 border-2 border-white" />}
+
+      {/* Real data badge */}
+      {actual && (
+        <span className="absolute top-1 left-1 text-[8px] font-bold opacity-60">●</span>
       )}
     </button>
   );
@@ -122,6 +109,12 @@ export default function CalendarClient() {
   const [selectedPark, setSelectedPark] = useState(PARKS[0].slug);
   const [viewYear,  setViewYear]  = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
+
+  function goToToday() {
+    setViewYear(today.getFullYear());
+    setViewMonth(today.getMonth());
+    setSelectedDate(today);
+  }
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [actualData, setActualData] = useState<Record<string, ActualDay>>({});
   const [loadingActual, setLoadingActual] = useState(false);
@@ -368,14 +361,14 @@ export default function CalendarClient() {
       {/* Calendar card */}
       <Card>
         <CardContent className="p-4 space-y-3">
-          {/* Month navigation — big, obvious arrows */}
-          <div className="flex items-center gap-3">
+          {/* Month navigation */}
+          <div className="flex items-center gap-2">
             <button
               onClick={prevMonth}
               disabled={isPrevDisabled}
-              className="flex items-center justify-center w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-25 disabled:cursor-not-allowed transition-colors flex-shrink-0"
+              className="flex items-center justify-center w-11 h-11 rounded-xl bg-gray-800 text-white hover:bg-gray-700 active:bg-gray-900 disabled:opacity-25 disabled:cursor-not-allowed transition-colors flex-shrink-0 shadow-sm"
             >
-              <ChevronLeft className="w-6 h-6 text-gray-700" strokeWidth={2.5} />
+              <ChevronLeft className="w-6 h-6" strokeWidth={2.5} />
             </button>
 
             <div className="flex-1 text-center">
@@ -384,8 +377,8 @@ export default function CalendarClient() {
               </h2>
               <div className="flex items-center justify-center gap-3 mt-0.5 text-xs text-gray-500">
                 <span>avg <strong>{monthlyStats.avg}</strong>/10</span>
-                <span className="text-green-600 font-semibold">best: {monthlyStats.best}</span>
-                <span className="text-red-500 font-semibold">busiest: {monthlyStats.worst}</span>
+                <span className="text-green-600 font-semibold">best {CROWD_ICONS["very-low"]} {monthlyStats.best}</span>
+                <span className="text-red-500 font-semibold">busiest {CROWD_ICONS["very-high"]} {monthlyStats.worst}</span>
                 {loadingActual && <RefreshCw className="w-3 h-3 animate-spin text-gray-400" />}
               </div>
             </div>
@@ -393,11 +386,24 @@ export default function CalendarClient() {
             <button
               onClick={nextMonth}
               disabled={isNextDisabled}
-              className="flex items-center justify-center w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-25 disabled:cursor-not-allowed transition-colors flex-shrink-0"
+              className="flex items-center justify-center w-11 h-11 rounded-xl bg-gray-800 text-white hover:bg-gray-700 active:bg-gray-900 disabled:opacity-25 disabled:cursor-not-allowed transition-colors flex-shrink-0 shadow-sm"
             >
-              <ChevronRight className="w-6 h-6 text-gray-700" strokeWidth={2.5} />
+              <ChevronRight className="w-6 h-6" strokeWidth={2.5} />
             </button>
           </div>
+
+          {/* Today button */}
+          {(viewYear !== today.getFullYear() || viewMonth !== today.getMonth()) && (
+            <div className="flex justify-center">
+              <button
+                onClick={goToToday}
+                className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm"
+              >
+                <CalendarCheck className="w-3.5 h-3.5" />
+                Back to Today
+              </button>
+            </div>
+          )}
 
           {/* Past month notice */}
           {isPastMonth && (
@@ -508,18 +514,18 @@ export default function CalendarClient() {
       {/* Legend */}
       <div className="flex flex-wrap gap-2 text-xs">
         {[
-          { bg:"bg-emerald-100", color:"text-emerald-700", label:"Very Low (1–2)" },
-          { bg:"bg-green-100",   color:"text-green-700",   label:"Low (3–4)" },
-          { bg:"bg-yellow-100",  color:"text-yellow-700",  label:"Moderate (5–6)" },
-          { bg:"bg-orange-100",  color:"text-orange-700",  label:"High (7–8)" },
-          { bg:"bg-red-100",     color:"text-red-700",     label:"Very High (9–10)" },
-        ].map(({ bg, color, label }) => (
+          { bg:"bg-emerald-100", color:"text-emerald-700", icon:"🌵", label:"Very Low — walk right on" },
+          { bg:"bg-green-100",   color:"text-green-700",   icon:"🍦", label:"Low — short waits" },
+          { bg:"bg-yellow-100",  color:"text-yellow-700",  icon:"🎡", label:"Moderate — plan ahead" },
+          { bg:"bg-orange-100",  color:"text-orange-700",  icon:"🎢", label:"High — Lightning Lane recommended" },
+          { bg:"bg-red-100",     color:"text-red-700",     icon:"🌋", label:"Very High — maximum crowds" },
+        ].map(({ bg, color, icon, label }) => (
           <span key={label} className={cn("flex items-center gap-1.5 px-2.5 py-1 rounded-full font-semibold", bg, color)}>
-            {label}
+            {icon} {label}
           </span>
         ))}
         <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full font-semibold bg-blue-50 text-blue-700">
-          ● = real data
+          ● = real collected data
         </span>
       </div>
 
