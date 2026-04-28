@@ -10,10 +10,12 @@ interface AttractionImageProps {
   className?: string;
 }
 
+// Version bump to bust stale null-result cache on deploy
+const CACHE_VERSION = "v2";
 const cache = new Map<string, string | null>();
 
 export default function AttractionImage({ attractionName, parkName, className }: AttractionImageProps) {
-  const key = `${attractionName}__${parkName}`;
+  const key = `${CACHE_VERSION}__${attractionName}__${parkName}`;
   const [url, setUrl] = useState<string | null | undefined>(cache.has(key) ? cache.get(key) : undefined);
   const [error, setError] = useState(false);
   const ref = useRef<HTMLDivElement>(null);

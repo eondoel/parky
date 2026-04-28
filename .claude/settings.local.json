@@ -35,7 +35,11 @@
       "Bash(curl -s \"https://api.themeparks.wiki/v1/entity/7340550b-c14d-4def-80bb-acdb51d49a66/children\")",
       "Bash(curl -s \"https://api.themeparks.wiki/v1/entity/3638ac09-9fce-4a43-8c79-8ebbe17afce2\")",
       "Bash(curl -s \"https://en.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&pithumbsize=400&titles=Space%20Mountain%20\\(Disneyland\\)&redirects=1\")",
-      "Bash(git -C /Users/eondavid/Documents/Appz/Parky commit -m \"feat: crowd icons, attraction photos, Today button, illuminated past data\")"
+      "Bash(git -C /Users/eondavid/Documents/Appz/Parky commit -m \"feat: crowd icons, attraction photos, Today button, illuminated past data\")",
+      "Bash(curl -s \"https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=Adventureland+Treehouse+Disney&srlimit=3\")",
+      "Bash(curl -s \"https://en.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&pithumbsize=400&titles=Adventureland%20Treehouse&redirects=1\")",
+      "Bash(npx tsc *)",
+      "Bash(git -C /Users/eondavid/Documents/Appz/Parky commit -m \"fix: use Wikipedia search API for better attraction image matching\")"
     ]
   }
 }
