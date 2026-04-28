@@ -7,6 +7,7 @@ import WaitBadge from "@/components/WaitBadge";
 import AttractionImage from "@/components/AttractionImage";
 import { Card, CardContent } from "@/components/ui/card";
 import { crowdLevel } from "@/lib/utils";
+import { getLandsForPark } from "@/lib/lands";
 import { ArrowLeft, RefreshCw, Search } from "lucide-react";
 
 interface Attraction {
@@ -15,6 +16,7 @@ interface Attraction {
   status: string;
   waitMinutes: number | null;
   singleRider: number | null;
+  land: string;
 }
 
 type Filter = "all" | "open" | "short" | "long";
@@ -64,6 +66,21 @@ export default function ParkDetailClient({ park }: { park: ParkDef }) {
     if (filter === "long") list = list.filter((a) => (a.waitMinutes ?? 0) > 60);
     return list;
   }, [attractions, search, filter]);
+
+  const groupedByLand = useMemo(() => {
+    const landOrder = getLandsForPark(park.slug);
+    const groups = new Map<string, Attraction[]>();
+    for (const land of landOrder) groups.set(land, []);
+    for (const a of filtered) {
+      const land = a.land ?? "Other";
+      if (!groups.has(land)) groups.set(land, []);
+      groups.get(land)!.push(a);
+    }
+    // Remove empty groups
+    return landOrder
+      .map((land) => ({ land, items: groups.get(land) ?? [] }))
+      .filter((g) => g.items.length > 0);
+  }, [filtered, park.slug]);
 
   const FILTER_OPTS: { value: Filter; label: string }[] = [
     { value: "all", label: "All" },
@@ -165,29 +182,38 @@ export default function ParkDetailClient({ park }: { park: ParkDef }) {
       ) : filtered.length === 0 ? (
         <p className="text-center text-gray-500 py-12">No attractions match your filters.</p>
       ) : (
-        <div className="space-y-2">
-          {filtered.map((a) => (
-            <div
-              key={a.id}
-              className="flex items-center gap-3 bg-white rounded-xl border border-gray-200 overflow-hidden"
-            >
-              {/* Photo thumbnail */}
-              <div className="relative w-16 h-16 flex-shrink-0">
-                <AttractionImage
-                  attractionName={a.name}
-                  parkName={park.name}
-                  className="absolute inset-0 rounded-l-xl overflow-hidden"
-                />
-              </div>
-              {/* Info */}
-              <div className="flex-1 min-w-0 py-2">
-                <p className="text-sm font-medium text-gray-900 truncate">{a.name}</p>
-                {a.singleRider !== null && (
-                  <p className="text-xs text-gray-500 mt-0.5">Single rider: {a.singleRider} min</p>
-                )}
-              </div>
-              <div className="pr-4 flex-shrink-0">
-                <WaitBadge waitMinutes={a.waitMinutes} status={a.status} />
+        <div className="space-y-6">
+          {groupedByLand.map(({ land, items }) => (
+            <div key={land}>
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-400 px-1 mb-2">
+                {land}
+              </h2>
+              <div className="space-y-2">
+                {items.map((a) => (
+                  <div
+                    key={a.id}
+                    className="flex items-center gap-3 bg-white rounded-xl border border-gray-200 overflow-hidden"
+                  >
+                    {/* Photo thumbnail */}
+                    <div className="relative w-16 h-16 flex-shrink-0">
+                      <AttractionImage
+                        attractionName={a.name}
+                        parkName={park.name}
+                        className="absolute inset-0 rounded-l-xl overflow-hidden"
+                      />
+                    </div>
+                    {/* Info */}
+                    <div className="flex-1 min-w-0 py-2">
+                      <p className="text-sm font-medium text-gray-900 truncate">{a.name}</p>
+                      {a.singleRider !== null && (
+                        <p className="text-xs text-gray-500 mt-0.5">Single rider: {a.singleRider} min</p>
+                      )}
+                    </div>
+                    <div className="pr-4 flex-shrink-0">
+                      <WaitBadge waitMinutes={a.waitMinutes} status={a.status} />
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           ))}

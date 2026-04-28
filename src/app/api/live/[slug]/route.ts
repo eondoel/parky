@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PARK_BY_SLUG } from "@/lib/parks";
 import { getLiveData } from "@/lib/themeparks";
+import { getLandForAttraction } from "@/lib/lands";
 
 export async function GET(
   _req: NextRequest,
@@ -21,6 +22,7 @@ export async function GET(
       waitMinutes: e.queue?.STANDBY?.waitTime ?? null,
       singleRider: e.queue?.SINGLE_RIDER?.waitTime ?? null,
       lastUpdated: e.lastUpdated,
+      land: getLandForAttraction(e.name, slug),
     }))
     .sort((a, b) => {
       if (a.waitMinutes === null && b.waitMinutes === null) return a.name.localeCompare(b.name);
