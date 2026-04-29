@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import Image from "next/image";
 import WaitBadge from "@/components/WaitBadge";
 import { crowdLevel } from "@/lib/utils";
 import { ParkDef } from "@/lib/parks";
@@ -66,7 +66,6 @@ export default function ParkCard({ park, refreshInterval = 60000 }: ParkCardProp
     operating.length > 0
       ? Math.round(operating.reduce((s, a) => s + (a.waitMinutes ?? 0), 0) / operating.length)
       : null;
-
   const crowd = avgWait !== null ? crowdLevel(avgWait) : null;
 
   const top5 = [
@@ -83,76 +82,89 @@ export default function ParkCard({ park, refreshInterval = 60000 }: ParkCardProp
     : null;
 
   return (
-    <Card className="flex flex-col h-full">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">{park.logo}</span>
-            <div>
-              <CardTitle>{park.shortName}</CardTitle>
-              <p className="text-xs text-gray-500 mt-0.5">{park.location}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            {crowd && (
-              <span className={`text-xs font-semibold ${crowd.color}`}>{crowd.label}</span>
-            )}
-            {loading && <RefreshCw className="w-3 h-3 text-gray-400 animate-spin" />}
-          </div>
+    <Link href={`/parks/${park.slug}`} className="group block rounded-2xl overflow-hidden shadow-sm border border-gray-200 bg-white hover:shadow-md transition-shadow">
+      {/* Hero image */}
+      <div className="relative h-40 w-full overflow-hidden">
+        <Image
+          src={park.image}
+          alt={park.name}
+          fill
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+        />
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+        {/* Park name on photo */}
+        <div className="absolute bottom-0 left-0 right-0 p-3">
+          <p className="text-white font-bold text-base leading-tight drop-shadow">{park.shortName}</p>
+          <p className="text-white/70 text-xs mt-0.5">{park.location}</p>
         </div>
 
-        {/* Operating hours */}
-        {hours?.open && hours?.close && (
-          <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
-            <span className="flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              {hours.open} – {hours.close}
-            </span>
+        {/* Crowd badge top-right */}
+        {crowd && (
+          <div className={`absolute top-2 right-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-black/50 backdrop-blur-sm ${crowd.color}`}>
+            {crowd.label}
+          </div>
+        )}
+        {loading && (
+          <div className="absolute top-2 left-2">
+            <RefreshCw className="w-3.5 h-3.5 text-white/70 animate-spin" />
+          </div>
+        )}
+      </div>
+
+      {/* Body */}
+      <div className="p-3 space-y-2">
+        {/* Hours row */}
+        {hours?.open && hours?.close ? (
+          <div className="flex items-center gap-2 text-xs text-gray-500">
+            <Clock className="w-3 h-3 flex-shrink-0" />
+            <span>{hours.open} – {hours.close}</span>
             {hours.earlyEntry && (
-              <span className="rounded-full bg-blue-50 text-blue-600 px-2 py-0.5 font-medium">
+              <span className="ml-auto rounded-full bg-blue-50 text-blue-600 px-2 py-0.5 font-medium whitespace-nowrap">
                 Early Entry {hours.earlyEntry}
               </span>
             )}
           </div>
+        ) : (
+          <div className="h-4" />
         )}
-      </CardHeader>
 
-      <CardContent className="flex-1 flex flex-col gap-3">
+        {/* Top attractions */}
         {loading ? (
-          <div className="space-y-2">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-8 rounded-lg bg-gray-100 animate-pulse" />
+          <div className="space-y-1.5">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="h-7 rounded-lg bg-gray-100 animate-pulse" />
             ))}
           </div>
         ) : top5.length === 0 ? (
-          <p className="text-sm text-gray-500 py-4 text-center">No live data available</p>
+          <p className="text-xs text-gray-400 py-3 text-center">No live data</p>
         ) : (
           <ul className="divide-y divide-gray-50">
             {top5.map((a) => (
-              <li key={a.id} className="flex items-center justify-between py-2 gap-3">
-                <span className="text-sm text-gray-800 truncate">{a.name}</span>
+              <li key={a.id} className="flex items-center justify-between py-1.5 gap-2">
+                <span className="text-xs text-gray-700 truncate">{a.name}</span>
                 <WaitBadge waitMinutes={a.waitMinutes} status={a.status} size="sm" />
               </li>
             ))}
           </ul>
         )}
 
-        <div className="mt-auto pt-2 flex items-center justify-between">
-          {parkTime && (
+        {/* Footer */}
+        <div className="flex items-center justify-between pt-1 border-t border-gray-50">
+          {parkTime ? (
             <span className="flex items-center gap-1 text-xs text-gray-400">
               <Clock className="w-3 h-3" />
               {parkTime} local
             </span>
-          )}
-          <Link
-            href={`/parks/${park.slug}`}
-            className="ml-auto flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 font-medium"
-          >
+          ) : <span />}
+          <span className="flex items-center gap-0.5 text-xs text-blue-600 font-medium">
             View all
             <ChevronRight className="w-3 h-3" />
-          </Link>
+          </span>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </Link>
   );
 }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getCuratedImage } from "@/lib/attraction-images";
 
 // Strip marketing suffixes that don't appear in Wikipedia titles
 function cleanName(name: string): string {
@@ -44,6 +45,10 @@ export async function GET(req: NextRequest) {
   if (!rawName) return NextResponse.json({ url: null });
 
   const name = cleanName(rawName);
+
+  // Check curated list first (instant, no network)
+  const curated = getCuratedImage(rawName);
+  if (curated) return NextResponse.json({ url: curated }, { headers: { "Cache-Control": "public, max-age=86400" } });
 
   // Try progressively broader queries
   const queries = [

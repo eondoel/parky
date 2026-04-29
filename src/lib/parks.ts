@@ -7,6 +7,7 @@ export interface ParkDef {
   timezone: string;
   color: string;
   logo: string;
+  image: string;
 }
 
 export const PARKS: ParkDef[] = [
@@ -20,6 +21,7 @@ export const PARKS: ParkDef[] = [
     timezone: "America/Los_Angeles",
     color: "#1565C0",
     logo: "🏰",
+    image: "/images/parks/disneyland.png",
   },
   {
     slug: "california-adventure",
@@ -30,6 +32,7 @@ export const PARKS: ParkDef[] = [
     timezone: "America/Los_Angeles",
     color: "#E65100",
     logo: "🌟",
+    image: "/images/parks/california-adventure.jpg",
   },
   // ── Walt Disney World ────────────────────────────────────────────
   {
@@ -41,6 +44,7 @@ export const PARKS: ParkDef[] = [
     timezone: "America/New_York",
     color: "#6A1B9A",
     logo: "👑",
+    image: "/images/parks/magic-kingdom.jpg",
   },
   {
     slug: "epcot",
@@ -51,6 +55,7 @@ export const PARKS: ParkDef[] = [
     timezone: "America/New_York",
     color: "#00796B",
     logo: "🌍",
+    image: "/images/parks/epcot.jpg",
   },
   {
     slug: "hollywood-studios",
@@ -61,6 +66,7 @@ export const PARKS: ParkDef[] = [
     timezone: "America/New_York",
     color: "#C62828",
     logo: "🎬",
+    image: "/images/parks/hollywood-studios.jpg",
   },
   {
     slug: "animal-kingdom",
@@ -71,6 +77,7 @@ export const PARKS: ParkDef[] = [
     timezone: "America/New_York",
     color: "#2E7D32",
     logo: "🦁",
+    image: "/images/parks/animal-kingdom.jpg",
   },
   // ── Universal Studios Hollywood ──────────────────────────────────
   {
@@ -82,6 +89,7 @@ export const PARKS: ParkDef[] = [
     timezone: "America/Los_Angeles",
     color: "#F57F17",
     logo: "🎥",
+    image: "/images/parks/universal-hollywood.jpg",
   },
   // ── Universal Orlando ────────────────────────────────────────────
   {
@@ -93,6 +101,7 @@ export const PARKS: ParkDef[] = [
     timezone: "America/New_York",
     color: "#FF6F00",
     logo: "🎞️",
+    image: "/images/parks/universal-studios-florida.jpg",
   },
   {
     slug: "islands-of-adventure",
@@ -103,6 +112,7 @@ export const PARKS: ParkDef[] = [
     timezone: "America/New_York",
     color: "#1976D2",
     logo: "⚓",
+    image: "/images/parks/islands-of-adventure.jpg",
   },
   {
     slug: "epic-universe",
@@ -113,6 +123,7 @@ export const PARKS: ParkDef[] = [
     timezone: "America/New_York",
     color: "#4527A0",
     logo: "🌌",
+    image: "/images/parks/epic-universe.jpg",
   },
 ];
 
