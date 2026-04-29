@@ -2,26 +2,24 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { ImageOff } from "lucide-react";
 
 interface AttractionImageProps {
   attractionName: string;
   parkName: string;
+  parkImage: string;
   className?: string;
 }
 
-// Version bump to bust stale null-result cache on deploy
-const CACHE_VERSION = "v2";
+const CACHE_VERSION = "v3";
 const cache = new Map<string, string | null>();
 
-export default function AttractionImage({ attractionName, parkName, className }: AttractionImageProps) {
+export default function AttractionImage({ attractionName, parkName, parkImage, className }: AttractionImageProps) {
   const key = `${CACHE_VERSION}__${attractionName}__${parkName}`;
   const [url, setUrl] = useState<string | null | undefined>(cache.has(key) ? cache.get(key) : undefined);
-  const [error, setError] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
-  // Only fetch when scrolled into view
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -40,22 +38,23 @@ export default function AttractionImage({ attractionName, parkName, className }:
       .catch(() => { cache.set(key, null); setUrl(null); });
   }, [visible, key, attractionName, parkName]);
 
+  // Determine what src to show — attraction-specific or park fallback
+  const displayUrl = (url && !imgError) ? url : (url === null || imgError) ? parkImage : null;
+
   return (
     <div ref={ref} className={className}>
-      {url && !error ? (
+      {displayUrl ? (
         <Image
-          src={url}
+          src={displayUrl}
           alt={attractionName}
           fill
           className="object-cover"
-          onError={() => setError(true)}
+          onError={() => {
+            if (displayUrl !== parkImage) setImgError(true);
+          }}
           sizes="80px"
           unoptimized
         />
-      ) : url === null || error ? (
-        <div className="w-full h-full flex items-center justify-center bg-gray-100">
-          <ImageOff className="w-4 h-4 text-gray-300" />
-        </div>
       ) : (
         <div className="w-full h-full bg-gray-100 animate-pulse" />
       )}

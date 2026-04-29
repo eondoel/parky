@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { ParkDef } from "@/lib/parks";
 import WaitBadge from "@/components/WaitBadge";
 import AttractionImage from "@/components/AttractionImage";
+import AttractionModal from "@/components/AttractionModal";
 import { Card, CardContent } from "@/components/ui/card";
 import { crowdLevel } from "@/lib/utils";
 import { getLandsForPark } from "@/lib/lands";
@@ -28,6 +29,8 @@ export default function ParkDetailClient({ park }: { park: ParkDef }) {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
+  const [selectedAttraction, setSelectedAttraction] = useState<Attraction | null>(null);
+  const closeModal = useCallback(() => setSelectedAttraction(null), []);
 
   async function fetchData() {
     setLoading(true);
@@ -191,15 +194,17 @@ export default function ParkDetailClient({ park }: { park: ParkDef }) {
               </h2>
               <div className="space-y-2">
                 {items.map((a) => (
-                  <div
+                  <button
                     key={a.id}
-                    className="flex items-center gap-3 bg-white rounded-xl border border-gray-200 overflow-hidden"
+                    onClick={() => setSelectedAttraction(a)}
+                    className="w-full flex items-center gap-3 bg-white rounded-xl border border-gray-200 overflow-hidden hover:border-blue-300 hover:shadow-sm transition-all text-left active:scale-[0.99]"
                   >
                     {/* Photo thumbnail */}
                     <div className="relative w-16 h-16 flex-shrink-0">
                       <AttractionImage
                         attractionName={a.name}
                         parkName={park.name}
+                        parkImage={park.image}
                         className="absolute inset-0 rounded-l-xl overflow-hidden"
                       />
                     </div>
@@ -213,7 +218,7 @@ export default function ParkDetailClient({ park }: { park: ParkDef }) {
                     <div className="pr-4 flex-shrink-0">
                       <WaitBadge waitMinutes={a.waitMinutes} status={a.status} />
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
@@ -225,6 +230,17 @@ export default function ParkDetailClient({ park }: { park: ParkDef }) {
         <p className="text-center text-xs text-gray-400">
           Last updated at {lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", timeZone: park.timezone })} local park time
         </p>
+      )}
+
+      {selectedAttraction && (
+        <AttractionModal
+          attraction={selectedAttraction}
+          parkSlug={park.slug}
+          parkName={park.name}
+          parkImage={park.image}
+          parkTimezone={park.timezone}
+          onClose={closeModal}
+        />
       )}
     </div>
   );
