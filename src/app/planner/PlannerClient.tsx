@@ -17,7 +17,7 @@ interface PlanStep {
 }
 
 interface PlanResult {
-  park: { name: string; logo: string; location: string };
+  park: { name: string; icon: string; location: string };
   visitDate: string;
   plan: PlanStep[];
 }
@@ -86,7 +86,7 @@ export default function PlannerClient() {
                       : "bg-white border-gray-200 text-gray-700 hover:border-gray-300"
                   }`}
                 >
-                  <span>{p.logo}</span>
+                  <span>{p.icon}</span>
                   <span className="truncate">{p.shortName}</span>
                 </button>
               ))}
@@ -134,7 +134,7 @@ export default function PlannerClient() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                <span>{result.park.logo ?? park.logo}</span>
+                <span>{result.park.icon ?? park.icon}</span>
                 Your Plan for {new Date(result.visitDate + "T12:00:00").toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}
               </h2>
               <p className="text-sm text-gray-500 mt-0.5">

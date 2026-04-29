@@ -2,9 +2,11 @@
 
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { PARKS, LA_PARKS, ORLANDO_PARKS } from "@/lib/parks";
-import { predictCrowd, getHolidaysForDate, scoreToLevel, CrowdPrediction, CROWD_ICONS } from "@/lib/predictions";
+import { predictCrowd, getHolidaysForDate, scoreToLevel, CrowdPrediction } from "@/lib/predictions";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight, Info, Plus, Trash2, RefreshCw, CalendarDays, FlaskConical, CalendarCheck } from "lucide-react";
+import ParkIcon from "@/components/ParkIcon";
+import CrowdIcon from "@/components/CrowdIcon";
 import { Card, CardContent } from "@/components/ui/card";
 
 const DOW    = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -68,8 +70,8 @@ function DayCell({
       </span>
 
       {/* Big crowd icon */}
-      <span className="text-2xl leading-none my-0.5" title={display.label}>
-        {display.icon}
+      <span className="leading-none my-0.5" title={display.label}>
+        <CrowdIcon level={display.level} size={22} />
       </span>
 
       {/* First holiday label */}
@@ -341,7 +343,7 @@ export default function CalendarClient() {
               className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-colors",
                 selectedPark === p.slug ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-700 border-gray-200 hover:border-blue-300"
               )}>
-              {p.logo} {p.shortName}
+              <ParkIcon name={p.icon} size={14} /> {p.shortName}
             </button>
           ))}
         </div>
@@ -352,7 +354,7 @@ export default function CalendarClient() {
               className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-colors",
                 selectedPark === p.slug ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-700 border-gray-200 hover:border-blue-300"
               )}>
-              {p.logo} {p.shortName}
+              <ParkIcon name={p.icon} size={14} /> {p.shortName}
             </button>
           ))}
         </div>
@@ -377,8 +379,8 @@ export default function CalendarClient() {
               </h2>
               <div className="flex items-center justify-center gap-3 mt-0.5 text-xs text-gray-500">
                 <span>avg <strong>{monthlyStats.avg}</strong>/10</span>
-                <span className="text-green-600 font-semibold">best {CROWD_ICONS["very-low"]} {monthlyStats.best}</span>
-                <span className="text-red-500 font-semibold">busiest {CROWD_ICONS["very-high"]} {monthlyStats.worst}</span>
+                <span className="inline-flex items-center gap-1 text-green-600 font-semibold">best <CrowdIcon level="very-low" size={12} /> {monthlyStats.best}</span>
+                <span className="inline-flex items-center gap-1 text-red-500 font-semibold">busiest <CrowdIcon level="very-high" size={12} /> {monthlyStats.worst}</span>
                 {loadingActual && <RefreshCw className="w-3 h-3 animate-spin text-gray-400" />}
               </div>
             </div>
@@ -472,7 +474,7 @@ export default function CalendarClient() {
                 <h3 className="font-bold text-gray-900">
                   {selectedDate.toLocaleDateString(undefined, { weekday:"long", month:"long", day:"numeric", year:"numeric" })}
                 </h3>
-                <p className="text-sm text-gray-500 mt-0.5">{park.logo} {park.name}</p>
+                <p className="inline-flex items-center gap-1.5 text-sm text-gray-500 mt-0.5"><ParkIcon name={park.icon} size={14} /> {park.name}</p>
 
                 {selectedActual && (
                   <p className="text-xs text-blue-600 mt-1">
@@ -487,13 +489,13 @@ export default function CalendarClient() {
                 {(selectedHolidays.length > 0 || selectedFeedEvents.length > 0) && (
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {selectedHolidays.map(h => (
-                      <span key={h} className="text-xs bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-2.5 py-0.5 font-medium">
-                        🗓 {h}
+                      <span key={h} className="inline-flex items-center gap-1 text-xs bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-2.5 py-0.5 font-medium">
+                        <CalendarDays className="w-3 h-3" /> {h}
                       </span>
                     ))}
                     {selectedFeedEvents.map(ev => (
-                      <span key={ev.uid} className="text-xs bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-full px-2.5 py-0.5 font-medium">
-                        📅 {ev.title}
+                      <span key={ev.uid} className="inline-flex items-center gap-1 text-xs bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-full px-2.5 py-0.5 font-medium">
+                        <CalendarDays className="w-3 h-3" /> {ev.title}
                       </span>
                     ))}
                   </div>
@@ -513,15 +515,15 @@ export default function CalendarClient() {
 
       {/* Legend */}
       <div className="flex flex-wrap gap-2 text-xs">
-        {[
-          { bg:"bg-emerald-100", color:"text-emerald-700", icon:"🌵", label:"Very Low — walk right on" },
-          { bg:"bg-green-100",   color:"text-green-700",   icon:"🍦", label:"Low — short waits" },
-          { bg:"bg-yellow-100",  color:"text-yellow-700",  icon:"🎡", label:"Moderate — plan ahead" },
-          { bg:"bg-orange-100",  color:"text-orange-700",  icon:"🎢", label:"High — Lightning Lane recommended" },
-          { bg:"bg-red-100",     color:"text-red-700",     icon:"🌋", label:"Very High — maximum crowds" },
-        ].map(({ bg, color, icon, label }) => (
+        {([
+          { bg:"bg-emerald-100", color:"text-emerald-700", level:"very-low", label:"Very Low — walk right on" },
+          { bg:"bg-green-100",   color:"text-green-700",   level:"low",      label:"Low — short waits" },
+          { bg:"bg-yellow-100",  color:"text-yellow-700",  level:"moderate", label:"Moderate — plan ahead" },
+          { bg:"bg-orange-100",  color:"text-orange-700",  level:"high",     label:"High — Lightning Lane recommended" },
+          { bg:"bg-red-100",     color:"text-red-700",     level:"very-high",label:"Very High — maximum crowds" },
+        ] as const).map(({ bg, color, level, label }) => (
           <span key={label} className={cn("flex items-center gap-1.5 px-2.5 py-1 rounded-full font-semibold", bg, color)}>
-            {icon} {label}
+            <CrowdIcon level={level} size={14} /> {label}
           </span>
         ))}
         <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full font-semibold bg-blue-50 text-blue-700">

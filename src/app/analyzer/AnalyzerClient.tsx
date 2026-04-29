@@ -96,7 +96,7 @@ export default function AnalyzerClient() {
                 : "bg-white text-gray-700 border-gray-200 hover:border-blue-300 hover:text-blue-700"
             }`}
           >
-            <span>{p.logo}</span>
+            <span>{p.icon}</span>
             {p.shortName}
           </button>
         ))}
@@ -122,7 +122,7 @@ export default function AnalyzerClient() {
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <span className="text-xl">{park.logo}</span>
+            <span className="text-xl">{park.icon}</span>
             <CardTitle>
               {park.shortName} — Average Wait by{" "}
               {chartType === "by-day" ? "Day of Week" : chartType === "by-hour" ? "Hour" : "Month"}

@@ -8,6 +8,7 @@ import AttractionImage from "@/components/AttractionImage";
 import { Card, CardContent } from "@/components/ui/card";
 import { crowdLevel } from "@/lib/utils";
 import { getLandsForPark } from "@/lib/lands";
+import ParkIcon from "@/components/ParkIcon";
 import { ArrowLeft, RefreshCw, Search } from "lucide-react";
 
 interface Attraction {
@@ -97,7 +98,7 @@ export default function ParkDetailClient({ park }: { park: ParkDef }) {
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div className="flex items-center gap-2">
-          <span className="text-3xl">{park.logo}</span>
+          <ParkIcon name={park.icon} size={32} style={{ color: park.color }} />
           <div>
             <h1 className="text-xl font-bold text-gray-900">{park.name}</h1>
             <p className="text-sm text-gray-500">{park.location}</p>

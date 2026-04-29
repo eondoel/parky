@@ -39,7 +39,19 @@
       "Bash(curl -s \"https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=Adventureland+Treehouse+Disney&srlimit=3\")",
       "Bash(curl -s \"https://en.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&pithumbsize=400&titles=Adventureland%20Treehouse&redirects=1\")",
       "Bash(npx tsc *)",
-      "Bash(git -C /Users/eondavid/Documents/Appz/Parky commit -m \"fix: use Wikipedia search API for better attraction image matching\")"
+      "Bash(git -C /Users/eondavid/Documents/Appz/Parky commit -m \"fix: use Wikipedia search API for better attraction image matching\")",
+      "Bash(curl -s \"https://api.themeparks.wiki/v1/entity/bfc89fd6-314d-44b4-b89e-df1a89cf991e/children\")",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(curl -s \"https://en.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&pithumbsize=1200&titles=Disneyland&redirects=1\")",
+      "Bash(python3 -c \"import sys,json; pages=json.load\\(sys.stdin\\)['query']['pages']; p=list\\(pages.values\\(\\)\\)[0]; print\\(p.get\\('thumbnail',{}\\).get\\('source',''\\)\\)\")",
+      "Bash(curl -sL \"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Sleeping_Beauty_Castle_-_February_2024.png/1280px-Sleeping_Beauty_Castle_-_February_2024.png\" -o disneyland.png)",
+      "Bash(curl -sL \"https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Pixarpiersunset2019_%28cropped%29_%28cropped%29.jpg/1280px-Pixarpiersunset2019_%28cropped%29_%28cropped%29.jpg\" -o california-adventure.jpg)",
+      "Bash(curl -sL \"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Cinderella_Castle%2C_Magic_Kingdom_Walt_Disney_World_%282024%29.jpg/1280px-Cinderella_Castle%2C_Magic_Kingdom_Walt_Disney_World_%282024%29.jpg\" -o magic-kingdom.jpg)",
+      "Bash(curl -sL \"https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Spaceship_Earth%2C_EPCOT.jpg/1280px-Spaceship_Earth%2C_EPCOT.jpg\" -o epcot.jpg)",
+      "Bash(curl -sL \"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/The_Twilight_Zone_Tower_of_Terror%2C_2024.jpg/1280px-The_Twilight_Zone_Tower_of_Terror%2C_2024.jpg\" -o hollywood-studios.jpg)",
+      "Bash(git push *)",
+      "Bash(node -e \"require\\('@phosphor-icons/react'\\); console.log\\('ok'\\)\")"
     ]
   }
 }

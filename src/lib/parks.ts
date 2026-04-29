@@ -6,7 +6,7 @@ export interface ParkDef {
   themeParksId: string;
   timezone: string;
   color: string;
-  logo: string;
+  icon: string;
   image: string;
 }
 
@@ -20,7 +20,7 @@ export const PARKS: ParkDef[] = [
     themeParksId: "7340550b-c14d-4def-80bb-acdb51d49a66",
     timezone: "America/Los_Angeles",
     color: "#1565C0",
-    logo: "🏰",
+    icon: "Castle",
     image: "/images/parks/disneyland.png",
   },
   {
@@ -31,7 +31,7 @@ export const PARKS: ParkDef[] = [
     themeParksId: "832fcd51-ea19-4e77-85c7-75d5843b127c",
     timezone: "America/Los_Angeles",
     color: "#E65100",
-    logo: "🌟",
+    icon: "Sparkle",
     image: "/images/parks/california-adventure.jpg",
   },
   // ── Walt Disney World ────────────────────────────────────────────
@@ -43,7 +43,7 @@ export const PARKS: ParkDef[] = [
     themeParksId: "75ea578a-adc8-4116-a54d-dccb60765ef9",
     timezone: "America/New_York",
     color: "#6A1B9A",
-    logo: "👑",
+    icon: "Crown",
     image: "/images/parks/magic-kingdom.jpg",
   },
   {
@@ -54,7 +54,7 @@ export const PARKS: ParkDef[] = [
     themeParksId: "47f90d2c-e191-4239-a466-5892ef59a88b",
     timezone: "America/New_York",
     color: "#00796B",
-    logo: "🌍",
+    icon: "Globe",
     image: "/images/parks/epcot.jpg",
   },
   {
@@ -65,7 +65,7 @@ export const PARKS: ParkDef[] = [
     themeParksId: "288747d1-8b4f-4a64-867e-ea7c9b27bad8",
     timezone: "America/New_York",
     color: "#C62828",
-    logo: "🎬",
+    icon: "FilmSlate",
     image: "/images/parks/hollywood-studios.jpg",
   },
   {
@@ -76,7 +76,7 @@ export const PARKS: ParkDef[] = [
     themeParksId: "1c84a229-8862-4648-9c71-378ddd2c7693",
     timezone: "America/New_York",
     color: "#2E7D32",
-    logo: "🦁",
+    icon: "Paw",
     image: "/images/parks/animal-kingdom.jpg",
   },
   // ── Universal Studios Hollywood ──────────────────────────────────
@@ -88,7 +88,7 @@ export const PARKS: ParkDef[] = [
     themeParksId: "bc4005c5-8c7e-41d7-b349-cdddf1796427",
     timezone: "America/Los_Angeles",
     color: "#F57F17",
-    logo: "🎥",
+    icon: "FilmStrip",
     image: "/images/parks/universal-hollywood.jpg",
   },
   // ── Universal Orlando ────────────────────────────────────────────
@@ -100,7 +100,7 @@ export const PARKS: ParkDef[] = [
     themeParksId: "eb3f4560-2383-4a36-9152-6b3e5ed6bc57",
     timezone: "America/New_York",
     color: "#FF6F00",
-    logo: "🎞️",
+    icon: "VideoCamera",
     image: "/images/parks/universal-studios-florida.jpg",
   },
   {
@@ -111,7 +111,7 @@ export const PARKS: ParkDef[] = [
     themeParksId: "267615cc-8943-4c2a-ae2c-5da728ca591f",
     timezone: "America/New_York",
     color: "#1976D2",
-    logo: "⚓",
+    icon: "Anchor",
     image: "/images/parks/islands-of-adventure.jpg",
   },
   {
@@ -122,7 +122,7 @@ export const PARKS: ParkDef[] = [
     themeParksId: "12dbb85b-265f-44e6-bccf-f1faa17211fc",
     timezone: "America/New_York",
     color: "#4527A0",
-    logo: "🌌",
+    icon: "Planet",
     image: "/images/parks/epic-universe.jpg",
   },
 ];
