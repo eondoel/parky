@@ -44,21 +44,19 @@ function DayCell({
   onClick: () => void;
 }) {
   const display = actual ? { ...scoreToLevel(actual.score), score: actual.score } : prediction;
-  // Past days without data are shown in grayscale/dimmed
-  const isDimmed = isPast && !actual;
 
   return (
     <button
-      onClick={isDimmed ? undefined : onClick}
+      onClick={onClick}
       className={cn(
         "relative flex flex-col items-center w-full min-h-[5rem] rounded-xl p-1.5 transition-all border-2 text-center gap-0.5",
-        isDimmed
-          ? "bg-gray-50 border-transparent opacity-35 cursor-default"
-          : isSelected
+        isSelected
           ? `${display.bg} ${display.color} border-current ring-2 ring-offset-1 ring-current shadow-md`
           : `${display.bg} ${display.color} border-transparent hover:border-current hover:shadow-sm cursor-pointer`,
         // Actual data cells get a subtle glow to stand out
-        actual && !isDimmed && "shadow-sm ring-1 ring-current ring-opacity-30"
+        actual && "shadow-sm ring-1 ring-current ring-opacity-30",
+        // Past predictions without real data are slightly muted
+        isPast && !actual && "opacity-60"
       )}
     >
       {/* Date number */}
