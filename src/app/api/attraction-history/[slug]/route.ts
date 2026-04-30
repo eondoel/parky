@@ -24,10 +24,10 @@ export async function GET(
   const dayStart = new Date(`${dateStr}T00:00:00`);
   const dayEnd   = new Date(`${dateStr}T23:59:59`);
 
-  // Convert park-local midnight → UTC
+  // Convert park-local midnight → UTC (tzOffset = UTC - LOCAL, so LOCAL + offset = UTC)
   const tzOffset = getTimezoneOffset(park.timezone, dayStart);
-  const utcStart = new Date(dayStart.getTime() - tzOffset);
-  const utcEnd   = new Date(dayEnd.getTime()   - tzOffset);
+  const utcStart = new Date(dayStart.getTime() + tzOffset);
+  const utcEnd   = new Date(dayEnd.getTime()   + tzOffset);
 
   const snapshots = await prisma.waitSnapshot.findMany({
     where: {
@@ -40,7 +40,7 @@ export async function GET(
   // Group by hour (park local time) and average
   const byHour: Record<number, { sum: number; count: number; statuses: string[] }> = {};
   for (const s of snapshots) {
-    const localHour = new Date(s.recordedAt.getTime() + tzOffset).getHours();
+    const localHour = new Date(s.recordedAt.getTime() - tzOffset).getHours();
     if (!byHour[localHour]) byHour[localHour] = { sum: 0, count: 0, statuses: [] };
     if (s.waitMinutes !== null) {
       byHour[localHour].sum += s.waitMinutes;
