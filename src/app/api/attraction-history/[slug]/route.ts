@@ -10,9 +10,14 @@ export async function GET(
   const park = PARK_BY_SLUG[slug];
   if (!park) return NextResponse.json({ error: "Park not found" }, { status: 404 });
 
-  const attractionId = req.nextUrl.searchParams.get("attractionId");
+  const themeParksId = req.nextUrl.searchParams.get("attractionId");
   const dateParam    = req.nextUrl.searchParams.get("date"); // YYYY-MM-DD in park timezone
-  if (!attractionId) return NextResponse.json({ error: "Missing attractionId" }, { status: 400 });
+  if (!themeParksId) return NextResponse.json({ error: "Missing attractionId" }, { status: 400 });
+
+  // Resolve ThemeParks Wiki ID → database Attraction ID
+  const attractionRecord = await prisma.attraction.findUnique({ where: { themeParksId } });
+  if (!attractionRecord) return NextResponse.json({ hours: [], date: dateParam ?? "", snapshots: 0 });
+  const attractionId = attractionRecord.id;
 
   // Determine the day window in UTC based on the park's timezone
   const dateStr = dateParam ?? new Date().toLocaleDateString("en-CA", { timeZone: park.timezone });
