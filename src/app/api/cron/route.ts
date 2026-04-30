@@ -14,16 +14,12 @@ export async function POST(req: NextRequest) {
   const results: { park: string; collected: number; errors: number }[] = [];
 
   for (const parkDef of PARKS) {
-    let park = await prisma.park.findUnique({ where: { slug: parkDef.slug } });
+    let park = await prisma.park.findFirst({
+      where: { OR: [{ themeParksId: parkDef.themeParksId }, { slug: parkDef.slug }] },
+    });
     if (!park) {
       park = await prisma.park.create({
-        data: {
-          name: parkDef.name,
-          slug: parkDef.slug,
-          location: parkDef.location,
-          themeParksId: parkDef.themeParksId,
-          timezone: parkDef.timezone,
-        },
+        data: { name: parkDef.name, slug: parkDef.slug, location: parkDef.location, themeParksId: parkDef.themeParksId, timezone: parkDef.timezone },
       });
     }
 
@@ -38,17 +34,10 @@ export async function POST(req: NextRequest) {
 
       for (const entity of attractions) {
         try {
-          let attraction = await prisma.attraction.findUnique({
-            where: { themeParksId: entity.id },
-          });
+          let attraction = await prisma.attraction.findUnique({ where: { themeParksId: entity.id } });
           if (!attraction) {
             attraction = await prisma.attraction.create({
-              data: {
-                parkId: park.id,
-                name: entity.name,
-                themeParksId: entity.id,
-                attractionType: entity.entityType,
-              },
+              data: { parkId: park.id, name: entity.name, themeParksId: entity.id, attractionType: entity.entityType },
             });
           }
 
